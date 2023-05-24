@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Pharmacy.Core.Entities.Bases
 {
@@ -15,21 +10,30 @@ namespace Pharmacy.Core.Entities.Bases
     {
         [Key]
         public TKey Id { get; set; }
+
         [Required]
-        public ushort LanguageId { get; set; } = default!;
+        public int LanguageId { get; set; } = default!;
+
         [Required]
         public bool Enable { get; set; } = true;
+
         [Required]
-        public ushort SortOrder { get; set; } = default!;
+        public int SortOrder { get; set; } = default!;
+
         [Required]
         public int CreatedBy { get; set; } = 1;
-        [Required, DataType(DataType.DateTime)]
-        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
-        public int? ModifiedBy { get; set; } = null;
-        [DataType(DataType.DateTime)]
-        public DateTime? ModifiedOn { get; set; } = null;
-        public int? DeletedBy { get; set; } = null;
-        [DataType(DataType.DateTime)]
-        public DateTime? DeletedOn { get; set; } = null;
+
+        [Required, MaxLength(50)]
+        public string CreatedOn { get; set; } = DateTime.UtcNow.ToString()!;
+
+        public int? ModifiedBy { get; set; } = null!;
+
+        [MaxLength(50)]
+        public string? ModifiedOn { get; set; } = null!;
+
+        public int? DeletedBy { get; set; } = null!;
+
+        [MaxLength(50)]
+        public string? DeletedOn { get; set; } = null!;
     }
 }

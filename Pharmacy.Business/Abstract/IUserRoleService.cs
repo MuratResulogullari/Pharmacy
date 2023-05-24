@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Pharmacy.Business.Abstract
 {
-    public interface IUserRoleService:ISyncService<UserRole>,IAsyncService<UserRole>
+    public interface IUserRoleService: ISyncService<UserRole>, IAsyncService<UserRole>, ISyncReadService<UserRole>, IAsyncReadService<UserRole>
     {
     }
 }

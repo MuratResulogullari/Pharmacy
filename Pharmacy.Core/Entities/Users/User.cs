@@ -20,28 +20,27 @@ namespace Pharmacy.Core.Entities.Users
         [ProtectedPersonalData, Required, MaxLength(50, ErrorMessage = "str_max50_var")]
         public string? UserName { get; set; }
 
+        [MaxLength(50, ErrorMessage = "str_max50_var")]
         public string? NormalizedUserName { get; set; }
 
         [ProtectedPersonalData, Required, MaxLength(100, ErrorMessage = "str_max100_var"), EmailAddress]
-        public string EmailAddress { get; set; }
+        public string Email { get; set; }
 
+        [MaxLength(100, ErrorMessage = "str_max100_var")]
         public string? NormalizedEmail { get; set; }
 
         [PersonalData]
         public bool EmailConfirmed { get; set; }
 
-        [Required]
-        public byte[] PasswordSalt { get; set; }
-
-        [Required]
-        public byte[] PasswordHash { get; set; }
+        [Required, MaxLength(250, ErrorMessage = "str_max250_var")]
+        public string PasswordHash { get; set; }
 
         public string? SecurityStamp { get; set; }
 
         public string? ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
 
-        [Required, MaxLength(20, ErrorMessage = "str_max20_var"), Phone]
-        public string Phone { get; set; }
+        [Required, MaxLength(15, ErrorMessage = "str_max20_var"), Phone]
+        public string PhoneNumber { get; set; }
 
         [PersonalData]
         public bool PhoneNumberConfirmed { get; set; }
@@ -54,6 +53,7 @@ namespace Pharmacy.Core.Entities.Users
         public bool LockoutEnabled { get; set; }
 
         public int AccessFailedCount { get; set; }
+
         public virtual ICollection<UserRole> UserRoles { get; set; }
 
         public override string ToString() => UserName ?? string.Empty;

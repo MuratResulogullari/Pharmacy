@@ -16,6 +16,81 @@ namespace Pharmacy.Business.Concrete
             _pharmacyRepository = pharmacyRepository;
         }
 
+        public RequestResult<bool> Any(Expression<Func<Core.Entities.Pharmacies.Pharmacy, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult<bool>> AnyAsync(Expression<Func<Core.Entities.Pharmacies.Pharmacy, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<int> Count(Expression<Func<Core.Entities.Pharmacies.Pharmacy, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult<int>> CountAsync(Expression<Func<Core.Entities.Pharmacies.Pharmacy, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult FirstOrDefault(Expression<Func<Core.Entities.Pharmacies.Pharmacy, bool>> predicate, CriteriaObject criteria)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult> FirstOrDefaultAsync(Expression<Func<Core.Entities.Pharmacies.Pharmacy, bool>> predicate, CriteriaObject criteria)
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<PagedResult> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult<PagedResult>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult GetByIds(int[] Ids)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult> GetByIdsAsync(int[] Ids)
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<int> Max(Expression<Func<Core.Entities.Pharmacies.Pharmacy, int>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult<PagedResult>> PagedListAsync(Expression<Func<Core.Entities.Pharmacies.Pharmacy, bool>> predicate, PagedCriteriaObject criteria)
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<List<Core.Entities.Pharmacies.Pharmacy>> ToList(Expression<Func<Core.Entities.Pharmacies.Pharmacy, bool>> predicate, ToListCriteriaObject criteria)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult<List<Core.Entities.Pharmacies.Pharmacy>>> ToListAsync(Expression<Func<Core.Entities.Pharmacies.Pharmacy, bool>> predicate, ToListCriteriaObject criteria)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult<PagedResult>> WhereAsync(Expression<Func<Core.Entities.Pharmacies.Pharmacy, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
         RequestResult ISyncService<Core.Entities.Pharmacies.Pharmacy>.Create(Core.Entities.Pharmacies.Pharmacy entity)
         {
             return _pharmacyRepository.Create(entity);

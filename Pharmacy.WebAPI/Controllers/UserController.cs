@@ -2,6 +2,7 @@
 using Pharmacy.Business.Abstract;
 using Pharmacy.Business.Mvc.ModelHandler;
 using Pharmacy.Business.Mvc.PasswordHash;
+using Pharmacy.Core.CriteriaObjects.Bases;
 using Pharmacy.Core.DataTransferObjects;
 using Pharmacy.Core.DataTransferObjects.Users;
 using Pharmacy.Core.Entities.Users;
@@ -13,52 +14,62 @@ namespace Pharmacy.WebAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserSevice _userSevice;
+        private readonly IRoleService _roleService;
 
-        public UserController(IUserSevice userSevice)
+        public UserController(IUserSevice userSevice
+            , IRoleService roleService)
         {
             _userSevice = userSevice;
+            _roleService = roleService;
         }
 
-        [HttpPost("CreateUser")]
-        public async Task<ActionResult<RequestResult>> CreateUser(UserDTO dto)
+        [HttpPost("Register")]
+        public async Task<ActionResult<RequestResult>> Register(UserDTO dto)
         {
             if (!ModelState.IsValid)
             {
                 return Ok(InvalidModelHandler.GetErrorMessages(ModelState));
             }
             User entity = new User();
-            PasswordUtility.HMACSHA512Passworder(dto.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            PasswordUtility.Hash(dto.Password, out string passwordHash);
             if (dto.RoleIds == null || dto.RoleIds.Length == 0)
                 dto.RoleIds = new int[] { 2 };
 
             entity.UserName = dto.UserName;
             entity.Name = dto.Name;
             entity.Surname = dto.Surname;
-            entity.EmailAddress = dto.EmailAddress;
+            entity.Email = dto.Email;
             entity.PasswordHash = passwordHash;
-            entity.PasswordSalt = passwordSalt;
-            entity.Phone = dto.Phone;
+            entity.PhoneNumber = dto.PhoneNumber;
             entity.UserRoles = dto.RoleIds.Select(x => new UserRole { RoleId = x, UserId = entity.Id, Enable = true }).ToList();
 
             var result = await _userSevice.CreateAsync(entity);
-
-            return Ok(result);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
         }
 
         [HttpPut("UpdateUser")]
         public async Task<ActionResult<RequestResult>> UpdateUser(UserDTO dto)
         {
-            PasswordUtility.HMACSHA512Passworder(dto.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            PasswordUtility.Hash(dto.Password, out string passwordHash);
             var user = new User
             {
+                TCKN = dto.TCKN,
                 Name = dto.Name,
                 Surname = dto.Surname,
                 UserName = dto.UserName,
                 PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                TCKN = dto.TCKN,
-                EmailAddress = dto.EmailAddress,
-                Phone = dto.Phone
+                Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
+                Enable = dto.Enable,
+                LanguageId = dto.LanguageId,
+                CreatedBy = 0
             };
             var result = await _userSevice.UpdateAsync(user);
 
@@ -72,23 +83,83 @@ namespace Pharmacy.WebAPI.Controllers
             return result;
         }
 
-        //[HttpGet("GetUserById/{id}")]
-        //public async Task<ActionResult<RequestResult>> GetUserById(int id)
-        //{
-        //    string[] properties = { "UserRoles" };
-        //    var result = await _userSevice.FirstOrDefaultAsync(x => x.Id == id && x.Enable, new Domain.CriteriaObjects.Base.CriteriaObject
-        //    {
-        //        Includes = properties
-        //    });
+        [HttpGet("GetUserById/{id}")]
+        public async Task<ActionResult<RequestResult>> GetUserById(int id)
+        {
+            var result = await _userSevice.GetByIdsAsync(new int[] { id });
 
-        //    return result;
-        //}
+            return result;
+        }
 
-        //[HttpGet("GetUsers")]
-        //public async Task<ActionResult<RequestResult>> GetUsers()
-        //{
-        //    var result = await _userSevice.GetAllAsync();
-        //    return result;
-        //}
+        [HttpGet("GetUsers")]
+        public async Task<ActionResult<RequestResult<PagedResult>>> GetUsers()
+        {
+            var result = await _userSevice.GetAllAsync();
+            return result;
+        }
+
+        [HttpPost("CreateRole")]
+        public async Task<ActionResult<RequestResult>> CreateRoleAsync(RoleDTO dto)
+        {
+            RequestResult requestResult = new();
+            if (!ModelState.IsValid)
+                return InvalidModelHandler.GetErrorMessages(ModelState);
+
+            var resultRole = _roleService.GetByName(dto.Name);
+            if (resultRole.Success)
+            {
+                resultRole.Success = false;
+                return BadRequest(resultRole);
+            }
+            else
+            {
+                var role = new Role
+                {
+                    Id = dto.Id,
+                    Name = dto.Name,
+                    Enable = dto.Enable,
+                    NormalizedName = dto.Name.Normalize(),
+                };
+                return await _roleService.CreateAsync(role);
+            }
+        }
+
+        [HttpPut("UpdateRole")]
+        public async Task<ActionResult<RequestResult>> UpdateRoleAsync(RoleDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return InvalidModelHandler.GetErrorMessages(ModelState);
+            var role = new Role
+            {
+                Id = dto.Id,
+                Name = dto.Name,
+                Enable = dto.Enable,
+            };
+            return await _roleService.UpdateAsync(role);
+        }
+
+        [HttpDelete("DeleteRole")]
+        public async Task<ActionResult<RequestResult>> DeleteRoleAsync(RoleDTO dto)
+        {
+            var resultRequest = new RequestResult();
+            var role = new Role
+            {
+                Id = dto.Id,
+                Name = dto.Name,
+            };
+            return await _roleService.DeleteAsync(role);
+        }
+
+        [HttpGet("getRoleById/{id}")]
+        public async Task<ActionResult<RequestResult>> GetRoleById(int id)
+        {
+            return await _roleService.GetByIdsAsync(new int[] { id });
+        }
+
+        [HttpGet("getRoles")]
+        public async Task<ActionResult<RequestResult<List<Role>>>> GetRoles()
+        {
+            return await _roleService.ToListAsync(x => x.Enable, new ToListCriteriaObject { });
+        }
     }
 }

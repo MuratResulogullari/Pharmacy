@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Pharmacy.Business.Abstract
 {
-    public interface IUserSevice:ISyncService<User>,IAsyncService<User>
+    public interface IUserSevice: ISyncService<User>, IAsyncService<User>, ISyncReadService<User>, IAsyncReadService<User>
     {
     }
 }

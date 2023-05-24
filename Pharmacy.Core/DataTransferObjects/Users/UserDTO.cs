@@ -18,10 +18,10 @@ namespace Pharmacy.Core.DataTransferObjects.Users
         public string? UserName { get; set; }
 
         [ProtectedPersonalData, Required, MaxLength(100, ErrorMessage = "str_max100_var"), EmailAddress]
-        public string EmailAddress { get; set; }
+        public string Email { get; set; }
 
         [Required, MaxLength(20, ErrorMessage = "str_max20_var"), Phone]
-        public string Phone { get; set; }
+        public string PhoneNumber { get; set; }
 
         [Required, MaxLength(100, ErrorMessage = "str_max100_var")]
         public string Password { get; set; }

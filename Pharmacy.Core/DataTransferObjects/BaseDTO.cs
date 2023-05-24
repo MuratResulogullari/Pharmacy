@@ -8,9 +8,9 @@
     {
         public TKey Id { get; set; }
 
-        public ushort LanguageId { get; set; }
+        public int LanguageId { get; set; }
 
         public bool Enable { get; set; }
-        public ushort SortOrder { get; set; }
+        public int SortOrder { get; set; }
     }
 }

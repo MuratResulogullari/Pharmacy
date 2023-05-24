@@ -2,5 +2,6 @@
 {
     public class RoleDTO : BaseDTO<int>
     {
+        public string Name { get; set; }
     }
 }

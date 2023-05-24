@@ -16,6 +16,26 @@ namespace Pharmacy.Business.Concrete
             _userRoleRepository = userRoleRepository;
         }
 
+        public RequestResult<bool> Any(Expression<Func<UserRole, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult<bool>> AnyAsync(Expression<Func<UserRole, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<int> Count(Expression<Func<UserRole, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult<int>> CountAsync(Expression<Func<UserRole, bool>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
         public RequestResult Create(UserRole entity)
         {
             return _userRoleRepository.Create(entity);
@@ -46,6 +66,46 @@ namespace Pharmacy.Business.Concrete
             return _userRoleRepository.FindAsync(predicate, criteria);
         }
 
+        public RequestResult FirstOrDefault(Expression<Func<UserRole, bool>> predicate, CriteriaObject criteria)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult> FirstOrDefaultAsync(Expression<Func<UserRole, bool>> predicate, CriteriaObject criteria)
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<PagedResult> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult<PagedResult>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult GetByIds(int[] Ids)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult> GetByIdsAsync(int[] Ids)
+        {
+            throw new NotImplementedException();
+        }
+
+        public RequestResult<int> Max(Expression<Func<UserRole, int>> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult<PagedResult>> PagedListAsync(Expression<Func<UserRole, bool>> predicate, PagedCriteriaObject criteria)
+        {
+            throw new NotImplementedException();
+        }
+
         public RequestResult<PagedResult> Select(Expression<Func<UserRole, object>> selector, Expression<Func<UserRole, bool>> predicate, PagedCriteriaObject criteria)
         {
             return _userRoleRepository.Select(selector, predicate, criteria);
@@ -56,6 +116,16 @@ namespace Pharmacy.Business.Concrete
             return _userRoleRepository.SelectAsync(selector, predicate, criteria);
         }
 
+        public RequestResult<List<UserRole>> ToList(Expression<Func<UserRole, bool>> predicate, ToListCriteriaObject criteria)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RequestResult<List<UserRole>>> ToListAsync(Expression<Func<UserRole, bool>> predicate, ToListCriteriaObject criteria)
+        {
+            throw new NotImplementedException();
+        }
+
         public RequestResult Update(UserRole entity)
         {
             return _userRoleRepository.Update(entity);
@@ -64,6 +134,11 @@ namespace Pharmacy.Business.Concrete
         public Task<RequestResult> UpdateAsync(UserRole entity)
         {
             return _userRoleRepository.UpdateAsync(entity);
+        }
+
+        public Task<RequestResult<PagedResult>> WhereAsync(Expression<Func<UserRole, bool>> predicate)
+        {
+            throw new NotImplementedException();
         }
     }
 }
