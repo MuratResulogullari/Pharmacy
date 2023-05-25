@@ -1,15 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PharmaciesComponent } from './components/pharmacies/pharmacies.component';
+import { ComponentsModule } from './components/components.module';
 
 
 
 @NgModule({
-  declarations: [
-    PharmaciesComponent
-  ],
+  declarations: [],
   imports: [
-    CommonModule
+    CommonModule,
+    ComponentsModule
+  ],
+  exports:[
+    
   ]
 })
 export class UiModule { }
