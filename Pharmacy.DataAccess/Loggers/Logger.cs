@@ -8,7 +8,26 @@ namespace Pharmacy.DataAccess.Loggers
     {
         private static string PostgreSQLString => ConfigurationConnectionDatabase.GetConnecxtionString();
         private static string Code => DateTime.UtcNow.ToString("G").Replace(".", "").Replace(" ", "").Replace(":", "");
-
+        public static void LogToDatabase(string message, int type, string stackTrace, string code, int createdBy)
+        {
+            using (NpgsqlConnection _con = new NpgsqlConnection(PostgreSQLString))
+            {
+                NpgsqlCommand cmd = new NpgsqlCommand();
+                cmd.Connection = _con;
+                cmd.CommandText = $"INSERT INTO Logs (Message,Type, StackTrace, ErrorCode,CreatedBy, CreatedOn) VALUES (@Message, @Type, @StackTrace, @ErrorCode, @CreatedBy, @CreatedOn)";
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Message", message.ToString());
+                cmd.Parameters.AddWithValue("@Type", type);
+                cmd.Parameters.AddWithValue("@StackTrace",stackTrace);
+                cmd.Parameters.AddWithValue("@ErrorCode", code.ToString());
+                cmd.Parameters.AddWithValue("@CreatedBy", createdBy);
+                cmd.Parameters.AddWithValue("@CreatedOn", DateTime.UtcNow.ToString("G"));
+                _con.Open();
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+                _con.Close();
+            }
+        }
         public static void LogExceptionToDatabase(Exception ex, string code, int createdBy)
         {
             using (NpgsqlConnection _con = new NpgsqlConnection(PostgreSQLString))
