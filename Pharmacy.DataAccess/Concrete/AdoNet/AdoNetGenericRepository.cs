@@ -1,8 +1,10 @@
-﻿using Npgsql;
+﻿using Microsoft.Extensions.Logging;
+using Npgsql;
 using Pharmacy.Core.CriteriaObjects.Bases;
 using Pharmacy.Core.DataTransferObjects;
 using Pharmacy.DataAccess.Abstract.Generics;
 using Pharmacy.DataAccess.Configuration;
+using Pharmacy.DataAccess.Loggers;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq.Expressions;
@@ -164,6 +166,7 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
                 {
                     result.Message = $"Kayıt işlemi yapılamadı. Code = {Code} - C1010";
                     Console.WriteLine($"Code= {Code} - StackTrace = {ex.StackTrace} - Message = {ex.Message}");
+                    Logger.LogExceptionToDatabase(ex,Code,1);
                 }
                 finally { _con.Close(); }
 

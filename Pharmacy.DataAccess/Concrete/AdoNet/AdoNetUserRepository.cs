@@ -56,7 +56,7 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
                     {
                         result.Message = $"Kayıt işlemi yapılamadı. Code = {Code} - C1010";
                         Console.WriteLine($"Code= {Code} - StackTrace = {ex.StackTrace} - Message = {ex.Message}");
-                        Logger.LogExceptionFile(ex, result.Message);
+                        Logger.LogExceptionToDatabase(ex, result.Message, 0);
                     }
                     finally { _con.Close(); }
 
