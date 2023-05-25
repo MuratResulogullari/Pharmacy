@@ -1,6 +1,7 @@
 ﻿using Npgsql;
 using Pharmacy.Core.DataTransferObjects;
 using Pharmacy.Core.Entities.Users;
+using Pharmacy.Core.Enums;
 using Pharmacy.DataAccess.Abstract;
 using Pharmacy.DataAccess.Abstract.Generics;
 using Pharmacy.DataAccess.Configuration;
@@ -17,6 +18,7 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
 
         public override async Task<RequestResult> CreateAsync(User entity)
         {
+            Logger.LogToDatabase("oluşrma öncesi", (int)ELogType.Info, string.Empty, string.Empty, entity.CreatedBy);
             var resultUser = await base.CreateAsync(entity);
             if (!resultUser.Success)
             {
@@ -47,6 +49,7 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
                             {
                                 result.Result = (string)result.Result + "," + role.RoleId;
                                 result.Message = "Kayıt yapılamayan roller var";
+                                Logger.LogToDatabase(result.Message, (int)ELogType.Error, result.Result.ToString(), Code, entity.CreatedBy);
                             }
                             cmd.Dispose();
                             rowsAffected = 0;
@@ -56,10 +59,10 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
                     {
                         result.Message = $"Kayıt işlemi yapılamadı. Code = {Code} - C1010";
                         Console.WriteLine($"Code= {Code} - StackTrace = {ex.StackTrace} - Message = {ex.Message}");
-                        Logger.LogExceptionFile(ex, result.Message);
+                        Logger.LogExceptionToDatabase(ex, result.Message, 0);
                     }
                     finally { _con.Close(); }
-
+                    Logger.LogToDatabase("oluşrma sonrası", (int)ELogType.Info, string.Empty, string.Empty, entity.CreatedBy);
                     return result;
                 }
             }
