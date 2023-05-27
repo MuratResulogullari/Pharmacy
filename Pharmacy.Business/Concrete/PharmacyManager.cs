@@ -61,7 +61,7 @@ namespace Pharmacy.Business.Concrete
             throw new NotImplementedException();
         }
 
-        public Task<RequestResult> GetByIdsAsync(int[] Ids)
+        public Task<RequestResult> GetByIdsAsync(int[] Ids, string tableName)
         {
             throw new NotImplementedException();
         }

@@ -86,7 +86,7 @@ namespace Pharmacy.WebAPI.Controllers
         [HttpGet("GetUserById/{id}")]
         public async Task<ActionResult<RequestResult>> GetUserById(int id)
         {
-            var result = await _userSevice.GetByIdsAsync(new int[] { id });
+            var result = await _userSevice.FirstOrDefaultAsync(x=>x.Id==id,new CriteriaObject { });
 
             return result;
         }
@@ -151,9 +151,9 @@ namespace Pharmacy.WebAPI.Controllers
         }
 
         [HttpGet("getRoleById/{id}")]
-        public async Task<ActionResult<RequestResult>> GetRoleById(int id)
+        public async Task<ActionResult<RequestResult>> GetRoleById(int id, string tableName)
         {
-            return await _roleService.GetByIdsAsync(new int[] { id });
+            return await _roleService.FirstOrDefaultAsync(x => x.Id == id, new CriteriaObject { });
         }
 
         [HttpGet("getRoles")]

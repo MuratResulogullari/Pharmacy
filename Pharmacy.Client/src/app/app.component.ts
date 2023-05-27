@@ -8,4 +8,6 @@ declare var $:any
 export class AppComponent {
   title = 'Pharmacy.Client';
 }
-$(document).ready(()=>{alert("hello")})
+$.get("https://localhost:7060/api/User/GetUserById/2", function( ) {
+  alert( "Data Loaded: "  );
+})

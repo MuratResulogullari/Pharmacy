@@ -11,7 +11,7 @@ namespace Pharmacy.DataAccess.Abstract.Generics
 {
     public interface IAsyncReadRepository<TEntity> where TEntity : class
     {
-        Task<RequestResult> GetByIdsAsync(int[] Ids);
+      
         Task<RequestResult> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CriteriaObject criteria);
 
         Task<RequestResult<bool>> AnyAsync(Expression<Func<TEntity, bool>> predicate);

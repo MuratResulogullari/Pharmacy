@@ -1,4 +1,5 @@
-﻿using Pharmacy.Core.CriteriaObjects.Bases;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Pharmacy.Core.CriteriaObjects.Bases;
 using Pharmacy.Core.DataTransferObjects;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Pharmacy.Business.Abstract.Generics
 {
     public interface IAsyncReadService<TEntity> where TEntity : class
     {
-        Task<RequestResult> GetByIdsAsync(int[] Ids);
+      
         Task<RequestResult> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CriteriaObject criteria);
 
         Task<RequestResult<bool>> AnyAsync(Expression<Func<TEntity, bool>> predicate);

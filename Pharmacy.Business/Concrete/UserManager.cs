@@ -102,14 +102,10 @@ namespace Pharmacy.Business.Concrete
             throw new NotImplementedException();
         }
 
-        public Task<RequestResult> GetByIdsAsync(int[] Ids)
-        {
-            throw new NotImplementedException();
-        }
-
+       
         public Task<RequestResult> FirstOrDefaultAsync(Expression<Func<User, bool>> predicate, CriteriaObject criteria)
         {
-            throw new NotImplementedException();
+           return _userRepository.FirstOrDefaultAsync(predicate, criteria);
         }
 
         public Task<RequestResult<bool>> AnyAsync(Expression<Func<User, bool>> predicate)

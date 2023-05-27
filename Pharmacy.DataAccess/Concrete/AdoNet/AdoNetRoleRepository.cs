@@ -20,7 +20,7 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
             RequestResult result = new();
             int rowsAffected = 0;
 
-            string commandText = @"INSERT INTO roles (NAME, normalizedname, concurrencystamp, languageid, ENABLE, sortorder, createdby, createdon)
+            string commandText = @"INSERT INTO Roles (NAME, normalizedname, concurrencystamp, languageid, ENABLE, sortorder, createdby, createdon)
                                    VALUES (";
             commandText += entity.Name + ",";
             commandText += entity.Name.Normalize().ToString() + ",";

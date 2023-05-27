@@ -1,13 +1,14 @@
-﻿using Microsoft.Extensions.Logging;
-using Npgsql;
+﻿using Npgsql;
 using Pharmacy.Core.CriteriaObjects.Bases;
 using Pharmacy.Core.DataTransferObjects;
 using Pharmacy.DataAccess.Abstract.Generics;
+using Pharmacy.DataAccess.Concrete.Utilities;
 using Pharmacy.DataAccess.Configuration;
 using Pharmacy.DataAccess.Loggers;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq.Expressions;
+using System.Text;
 
 namespace Pharmacy.DataAccess.Concrete.AdoNet
 {
@@ -166,7 +167,7 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
                 {
                     result.Message = $"Kayıt işlemi yapılamadı. Code = {Code} - C1010";
                     Console.WriteLine($"Code= {Code} - StackTrace = {ex.StackTrace} - Message = {ex.Message}");
-                    Logger.LogExceptionToDatabase(ex,Code,1);
+                    Logger.LogExceptionToDatabase(ex, Code, 1);
                 }
                 finally { _con.Close(); }
 
@@ -199,9 +200,45 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
             throw new NotImplementedException();
         }
 
-        public Task<RequestResult> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CriteriaObject criteria)
+        public async Task<RequestResult> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CriteriaObject criteria)
         {
-            throw new NotImplementedException();
+            RequestResult result = new RequestResult();
+            using (NpgsqlConnection con = new NpgsqlConnection(PostgreSQLString))
+            {
+                
+                string commandText = AddWhereToSelectCommand(predicate);
+                var command = new NpgsqlCommand(commandText, con);
+                NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter();
+                DataTable dataTable = new DataTable();
+                try
+                {
+                    con.Open();
+                    NpgsqlDataReader reader =await command.ExecuteReaderAsync();
+                    List<object> list = new List<object>();
+                    if (reader.HasRows)
+                    {
+                        list.AddRange(MapToEntity.DataReaderMapToList<object>(reader, criteria.Includes));
+                        result.Success = true;
+                        result.Message = "Kayıt var";
+                        result.Result = list.FirstOrDefault();
+                    }
+                    else
+                    {
+                        result.Message = "Kayıt bulunamadı.";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result.Message = $"Mevcut kayıt bulunamadı. Code = {Code} - A3456";
+                    Console.WriteLine($"Code= {Code} - StackTrace = {ex.StackTrace} - Message = {ex.Message}");
+                }
+                finally
+                {
+                    command.Dispose();
+                    con.Close();
+                }
+            }
+            return result;
         }
 
         public RequestResult<PagedResult> GetAll()
@@ -215,11 +252,6 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
         }
 
         public RequestResult GetByIds(int[] Ids)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<RequestResult> GetByIdsAsync(int[] Ids)
         {
             throw new NotImplementedException();
         }
@@ -268,5 +300,34 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
         {
             throw new NotImplementedException();
         }
+
+        private string CreateWhereClause(Expression<Func<TEntity, bool>> predicate)
+        {
+            StringBuilder p = new StringBuilder(predicate.Body.ToString());
+            var pName = predicate.Parameters.First();
+            p.Replace(pName.Name + ".", "");
+            p.Replace("==", "=");
+            p.Replace("AndAlso", "and");
+            p.Replace("OrElse", "or");
+            p.Replace("\"", "\'");
+            return p.ToString();
+        }
+        private string AddWhereToSelectCommand(Expression<Func<TEntity, bool>> predicate, int maxCount = 0)
+        {
+            string expBody = ((LambdaExpression)predicate).Body.ToString();
+
+            var paramName = predicate.Parameters[0].Name;
+            var tableName =predicate.Parameters[0].Type.Name+"s";
+            string command = string.Format("{0} where {1}", CreateSelectCommand(maxCount, tableName), CreateWhereClause(predicate));
+            return command;
+        }
+
+        private string CreateSelectCommand(int maxCount = 0, string tableName="")
+        {
+            string selectMax = maxCount > 0 ? "TOP " + maxCount.ToString() + " * " : "*";
+            string command = string.Format("Select {0} from {1}", selectMax, tableName);
+            return command;
+        }
+
     }
 }
