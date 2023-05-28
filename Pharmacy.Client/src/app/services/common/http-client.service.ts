@@ -1,6 +1,7 @@
 import { Inject,Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http"
 import { Observable } from 'rxjs';
+import { RequestPrameterCO } from 'src/app/contracts/criteria/base/request-prameter-co';
 @Injectable({
   providedIn: 'root'
 })
@@ -37,31 +38,5 @@ export class HttpClientService {
 
 }
 
-export class RequestResult<TEntity>
-    {
-          Success?:boolean;
-        Message?:string;
-        Result?:TEntity;
-        RedirectUrl?:string;
-    }
-export class RequestPrameterCO{
-  baseUrl?:string;
-  controller?:string;
-  action?:string;
-  param?:string;
-  headers?:HttpHeaders;
-  endPoint?:string;
-}
-export class BaseDTO<Tkey>{
-  Id?:Tkey;
-  LanguageId?:number;
-  Enable?:boolean;
-  SortOrder?:number;
-}
-export class PharmaciesDTO extends BaseDTO<number>{
-  Name?:string;
-  Address?:string;
-  PhoneNumber?:string;
-  Email?:string;
-  Status?:number
- }
+
+
