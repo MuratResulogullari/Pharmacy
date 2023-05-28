@@ -7,12 +7,15 @@ import { AdminModule } from './admin/admin.module';
 import { UiModule } from './ui/ui.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentsModule } from "./admin/layout/components/components.module";
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
     declarations: [
         AppComponent
     ],
-    providers: [],
+    providers: [
+      {provide:"baseUrl",useValue:"https://localhost:7060/api",multi:true}
+    ],
     bootstrap: [AppComponent],
     imports: [
         BrowserModule,
@@ -20,7 +23,8 @@ import { ComponentsModule } from "./admin/layout/components/components.module";
         AdminModule,
         UiModule,
         BrowserAnimationsModule,
-        ComponentsModule
+        ComponentsModule,
+        HttpClientModule
     ]
 })
 export class AppModule { }

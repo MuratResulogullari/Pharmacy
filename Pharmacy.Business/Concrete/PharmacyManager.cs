@@ -63,7 +63,7 @@ namespace Pharmacy.Business.Concrete
 
         public Task<RequestResult> GetByIdsAsync(int[] Ids)
         {
-            throw new NotImplementedException();
+            return _pharmacyRepository.GetByIdsAsync(Ids);
         }
 
         public RequestResult<int> Max(Expression<Func<Core.Entities.Pharmacies.Pharmacy, int>> predicate)

@@ -23,5 +23,23 @@ namespace Pharmacy.DataAccess.Concrete.Utilities
             }
             return list;
         }
+        public static List<T> DataReaderMapToListWithCaseMap<T>(IDataReader dataReader)
+        {
+            List<T> list = new List<T>();
+            T obj = default(T);
+            while (dataReader.Read())
+            {
+                obj = Activator.CreateInstance<T>();
+                foreach (PropertyInfo prop in obj.GetType().GetProperties())
+                {
+                    if (!object.Equals(dataReader[CaseMap.ConvertPascalCaseToSnakeCase(prop.Name)], DBNull.Value))
+                    {
+                        prop.SetValue(obj, dataReader[CaseMap.ConvertPascalCaseToSnakeCase(prop.Name)], null);
+                    }
+                }
+                list.Add(obj);
+            }
+            return list;
+        }
     }
 }
