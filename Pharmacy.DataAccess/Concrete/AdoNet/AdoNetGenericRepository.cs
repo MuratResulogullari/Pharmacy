@@ -20,7 +20,7 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
         private readonly string PostgreSQLString = ConfigurationConnectionDatabase.GetConnecxtionString();
         private readonly string Code = DateTime.UtcNow.ToString("G").Replace(".", "").Replace(" ", "").Replace(":", "");
 
-        public RequestResult<bool> Any(Expression<Func<TEntity, bool>> predicate)
+        public virtual RequestResult<bool> Any(Expression<Func<TEntity, bool>> predicate)
         {
             RequestResult<bool> result = new();
 
@@ -69,17 +69,17 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
             }
         }
 
-        public Task<RequestResult<bool>> AnyAsync(Expression<Func<TEntity, bool>> predicate)
+        public virtual Task<RequestResult<bool>> AnyAsync(Expression<Func<TEntity, bool>> predicate)
         {
             throw new NotImplementedException();
         }
 
-        public RequestResult<int> Count(Expression<Func<TEntity, bool>> predicate)
+        public virtual RequestResult<int> Count(Expression<Func<TEntity, bool>> predicate)
         {
             throw new NotImplementedException();
         }
 
-        public Task<RequestResult<int>> CountAsync(Expression<Func<TEntity, bool>> predicate)
+        public virtual Task<RequestResult<int>> CountAsync(Expression<Func<TEntity, bool>> predicate)
         {
             throw new NotImplementedException();
         }
@@ -194,42 +194,42 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
             throw new NotImplementedException();
         }
 
-        public RequestResult FirstOrDefault(Expression<Func<TEntity, bool>> predicate, CriteriaObject criteria)
+        public virtual RequestResult FirstOrDefault(Expression<Func<TEntity, bool>> predicate, CriteriaObject criteria)
         {
             throw new NotImplementedException();
         }
 
-        public Task<RequestResult> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CriteriaObject criteria)
+        public virtual Task<RequestResult> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, CriteriaObject criteria)
         {
             throw new NotImplementedException();
         }
 
-        public RequestResult<PagedResult> GetAll()
+        public virtual RequestResult<PagedResult> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Task<RequestResult<PagedResult>> GetAllAsync()
+        public virtual Task<RequestResult<PagedResult>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public RequestResult GetByIds(int[] Ids)
+        public virtual RequestResult GetByIds(int[] Ids)
         {
             throw new NotImplementedException();
         }
 
-        public Task<RequestResult> GetByIdsAsync(int[] Ids)
+        public virtual Task<RequestResult> GetByIdsAsync(int[] Ids)
         {
             throw new NotImplementedException();
         }
 
-        public RequestResult<int> Max(Expression<Func<TEntity, int>> predicate)
+        public virtual RequestResult<int> Max(Expression<Func<TEntity, int>> predicate)
         {
             throw new NotImplementedException();
         }
 
-        public Task<RequestResult<PagedResult>> PagedListAsync(Expression<Func<TEntity, bool>> predicate, PagedCriteriaObject criteria)
+        public virtual Task<RequestResult<PagedResult>> PagedListAsync(Expression<Func<TEntity, bool>> predicate, PagedCriteriaObject criteria)
         {
             throw new NotImplementedException();
         }
@@ -244,12 +244,12 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
             throw new NotImplementedException();
         }
 
-        public RequestResult<List<TEntity>> ToList(Expression<Func<TEntity, bool>> predicate, ToListCriteriaObject criteria)
+        public virtual RequestResult<List<TEntity>> ToList(Expression<Func<TEntity, bool>> predicate, ToListCriteriaObject criteria)
         {
             throw new NotImplementedException();
         }
 
-        public Task<RequestResult<List<TEntity>>> ToListAsync(Expression<Func<TEntity, bool>> predicate, ToListCriteriaObject criteria)
+        public virtual Task<RequestResult<List<TEntity>>> ToListAsync(Expression<Func<TEntity, bool>> predicate, ToListCriteriaObject criteria)
         {
             throw new NotImplementedException();
         }
@@ -264,7 +264,7 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
             throw new NotImplementedException();
         }
 
-        public Task<RequestResult<PagedResult>> WhereAsync(Expression<Func<TEntity, bool>> predicate)
+        public virtual Task<RequestResult<PagedResult>> WhereAsync(Expression<Func<TEntity, bool>> predicate)
         {
             throw new NotImplementedException();
         }

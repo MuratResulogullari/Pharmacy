@@ -7,11 +7,13 @@ import { HomeComponent } from './ui/components/home/home.component';
 const routes: Routes = [
   {
     path:"admin",component:LayoutComponent,children:[
+
     {path:"",component:DashboardComponent},
-    {path:"pharmacies",loadChildren:()=>import("./admin/components/pharmacies/pharmacies.module").then(module=>module.PharmaciesModule)},
-    {path:"logs",loadChildren:()=>import("./admin/components/logs/logs.module").then(module=>module.LogsModule)},
-    {path:"users",loadChildren:()=>import("./admin/components/users/users.module").then(module=>module.UsersModule)},
-   ]
+    {path:"",loadChildren:()=>import("./admin/components/pharmacies/pharmacies.module").then(module=>module.PharmaciesModule)},
+    {path:"",loadChildren:()=>import("./admin/components/logs/logs.module").then(module=>module.LogsModule)},
+    {path:"",loadChildren:()=>import("./admin/components/users/users.module").then(module=>module.UsersModule)},
+   
+  ]
   },
   {path:"",component:HomeComponent},
   {path:"pharmacies",loadChildren:()=>import("./ui/components/pharmacies/pharmacies.module").then(module=>module.PharmaciesModule)}

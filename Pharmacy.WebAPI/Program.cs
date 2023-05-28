@@ -21,6 +21,19 @@ namespace Pharmacy.WebAPI
 
             #endregion Add Services on IoC
 
+            #region Add Specific Cors
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("allowSpecificOrigins",
+                policy =>
+                {
+                    policy.WithOrigins("https://localhost:4200", "http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+                });
+            });
+
+            #endregion Add Specific Cors
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -29,7 +42,7 @@ namespace Pharmacy.WebAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseCors("allowSpecificOrigins");
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

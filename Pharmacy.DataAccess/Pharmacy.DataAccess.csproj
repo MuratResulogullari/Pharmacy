@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Contexts\**" />
+    <EmbeddedResource Remove="Contexts\**" />
+    <None Remove="Contexts\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
@@ -19,10 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Pharmacy.Core\Pharmacy.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Contexts\" />
   </ItemGroup>
 
 </Project>

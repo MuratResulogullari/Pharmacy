@@ -8,4 +8,3 @@ declare var $:any
 export class AppComponent {
   title = 'Pharmacy.Client';
 }
-$(document).ready(()=>{alert("hello")})
