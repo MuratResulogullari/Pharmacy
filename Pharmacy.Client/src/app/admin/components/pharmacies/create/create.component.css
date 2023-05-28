@@ -1,0 +1,54 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+.enable-section {
+    margin: 12px 0;
+}
+.pharmacy-create-form{
+ margin: .5rem;   
+ margin-bottom: 0px; 
+} 
+.enable-margin {
+    margin: 0 12px;
+  }
+  
+ul {
+    list-style-type: none;
+    margin-top: 4px;
+  }
+ section {
+    display: table;
+  }
+  
+.create-label {
+    display: table-cell;
+    font-size: 14px;
+    margin-left: 8px;
+    min-width: 120px;
+  }
+  
+.create-button-row {
+    display: table-cell;
+    max-width: 600px;
+  }
+  
+.create-button-row .mat-mdc-button-base {
+    margin: 8px 8px 8px 0;
+  }
+  
+.create-flex-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+.create-button-container {
+    display: flex;
+    justify-content: center;
+    width: 120px;
+  }
+.mat-mdc-form-field + .mat-mdc-form-field {
+    margin-left: 8px;
+  }

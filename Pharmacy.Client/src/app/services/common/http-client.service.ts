@@ -2,6 +2,7 @@ import { Inject,Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http"
 import { Observable } from 'rxjs';
 import { RequestPrameterCO } from 'src/app/contracts/criteria/base/request-prameter-co';
+import { RequestResult } from 'src/app/contracts/base/request-result';
 @Injectable({
   providedIn: 'root'
 })
@@ -19,10 +20,17 @@ export class HttpClientService {
     return this.httpClient.get<T>(url,{headers:requestPrameterCO.headers})
   }
 
-  post<T>(requestPrameterCO:Partial<RequestPrameterCO>,body: Partial<T>):Observable<T> {
+  postGeneric<T>(requestPrameterCO:Partial<RequestPrameterCO>,body: Partial<T>):Observable<T> {
     let url :string="";
     url = requestPrameterCO.endPoint? requestPrameterCO.endPoint : `${this.url(requestPrameterCO)}`;
+    
     return this.httpClient.post<T>(url,body,{headers:requestPrameterCO.headers})
+  }
+  post(requestPrameterCO:Partial<RequestPrameterCO>,body:any){
+    let url :string="";
+    url = requestPrameterCO.endPoint? requestPrameterCO.endPoint : `${this.url(requestPrameterCO)}`;
+    
+    return this.httpClient.post(url,body,{headers:requestPrameterCO.headers})
   }
  
   put<T>(requestPrameterCO:Partial<RequestPrameterCO>,body: Partial<T>):Observable<T> {
