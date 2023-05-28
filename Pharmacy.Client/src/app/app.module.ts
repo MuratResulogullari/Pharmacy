@@ -5,18 +5,26 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AdminModule } from './admin/admin.module';
 import { UiModule } from './ui/ui.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ComponentsModule } from "./admin/layout/components/components.module";
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    AdminModule,
-    UiModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent
+    ],
+    providers: [
+      {provide:"baseUrl",useValue:"https://localhost:7060/api",multi:true}
+    ],
+    bootstrap: [AppComponent],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        AdminModule,
+        UiModule,
+        BrowserAnimationsModule,
+        ComponentsModule,
+        HttpClientModule
+    ]
 })
 export class AppModule { }

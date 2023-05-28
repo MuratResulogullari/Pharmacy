@@ -1,4 +1,6 @@
 ﻿using Npgsql;
+using NpgsqlTypes;
+using Pharmacy.Core.Enums;
 using Pharmacy.DataAccess.Configuration;
 using System.Data;
 
@@ -8,42 +10,45 @@ namespace Pharmacy.DataAccess.Loggers
     {
         private static string PostgreSQLString => ConfigurationConnectionDatabase.GetConnecxtionString();
         private static string Code => DateTime.UtcNow.ToString("G").Replace(".", "").Replace(" ", "").Replace(":", "");
+
         public static void LogToDatabase(string message, int type, string stackTrace, string code, int createdBy)
         {
             using (NpgsqlConnection _con = new NpgsqlConnection(PostgreSQLString))
             {
-                NpgsqlCommand cmd = new NpgsqlCommand();
-                cmd.Connection = _con;
-                cmd.CommandText = $"INSERT INTO Logs (Message,Type, StackTrace, ErrorCode,CreatedBy, CreatedOn) VALUES (@Message, @Type, @StackTrace, @ErrorCode, @CreatedBy, @CreatedOn)";
+                //NpgsqlCommand cmd = new NpgsqlCommand();
+                //cmd.Connection = _con;
+                //cmd.CommandText = $"INSERT INTO logs (message,type, stack_trace, error_code,created_by, created_on) VALUES (@message, @type, @stack_trace, @error_code, @created_by, @created_on)";
+                NpgsqlCommand cmd = new NpgsqlCommand("public.sp_log", _con);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Message", message.ToString());
-                cmd.Parameters.AddWithValue("@Type", type);
-                cmd.Parameters.AddWithValue("@StackTrace",stackTrace);
-                cmd.Parameters.AddWithValue("@ErrorCode", code.ToString());
-                cmd.Parameters.AddWithValue("@CreatedBy", createdBy);
-                cmd.Parameters.AddWithValue("@CreatedOn", DateTime.UtcNow.ToString("G"));
+                cmd.Parameters.AddWithValue("@message", NpgsqlDbType.Varchar).Value = message.ToString();
+                cmd.Parameters.AddWithValue("@type", NpgsqlDbType.Integer).Value = type;
+                cmd.Parameters.AddWithValue("@stack_trace", NpgsqlDbType.Varchar).Value = stackTrace ?? string.Empty;
+                cmd.Parameters.AddWithValue("@error_code", NpgsqlDbType.Varchar).Value = code.ToString();
+                cmd.Parameters.AddWithValue("@created_by", NpgsqlDbType.Integer).Value = createdBy;
+                cmd.Parameters.AddWithValue("@created_on", NpgsqlDbType.Varchar).Value = DateTime.UtcNow.ToString("G");
                 _con.Open();
-                cmd.ExecuteNonQuery();
+
+                // int i = cmd.ExecuteNonQuery();
+                cmd.ExecuteReader();
                 cmd.Dispose();
                 _con.Close();
             }
         }
+
         public static void LogExceptionToDatabase(Exception ex, string code, int createdBy)
         {
             using (NpgsqlConnection _con = new NpgsqlConnection(PostgreSQLString))
             {
-                NpgsqlCommand cmd = new NpgsqlCommand();
-                cmd.Connection = _con;
-                cmd.CommandText = $"INSERT INTO Logs (Message,Type, StackTrace, ErrorCode,CreatedBy, CreatedOn) VALUES (@Message, @Type, @StackTrace, @ErrorCode, @CreatedBy, @CreatedOn)";
+                NpgsqlCommand cmd = new NpgsqlCommand("public.sp_log", _con);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Message", ex.Message.ToString());
-                cmd.Parameters.AddWithValue("@Type", ex.GetType().Name.ToString());
-                cmd.Parameters.AddWithValue("@StackTrace", ex.StackTrace ?? string.Empty);
-                cmd.Parameters.AddWithValue("@ErrorCode", code.ToString());
-                cmd.Parameters.AddWithValue("@CreatedBy", createdBy);
-                cmd.Parameters.AddWithValue("@CreatedOn", DateTime.UtcNow.ToString("G"));
+                cmd.Parameters.AddWithValue("@message", NpgsqlDbType.Varchar).Value = ex.Message.ToString();
+                cmd.Parameters.AddWithValue("@type", NpgsqlDbType.Integer).Value = (int)ELogType.Error;
+                cmd.Parameters.AddWithValue("@stack_trace", NpgsqlDbType.Text).Value = ex.StackTrace;
+                cmd.Parameters.AddWithValue("@error_code", NpgsqlDbType.Varchar).Value = code.ToString();
+                cmd.Parameters.AddWithValue("@created_by", NpgsqlDbType.Integer).Value = createdBy;
+                cmd.Parameters.AddWithValue("@created_on", NpgsqlDbType.Varchar).Value = DateTime.UtcNow.ToString("G");
                 _con.Open();
-                cmd.ExecuteNonQuery();
+                cmd.ExecuteReader();
                 cmd.Dispose();
                 _con.Close();
             }
