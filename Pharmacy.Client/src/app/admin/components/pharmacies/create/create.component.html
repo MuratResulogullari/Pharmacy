@@ -1,0 +1,51 @@
+<mat-form-field class="pharmacy-create-form">
+    <mat-label>Name</mat-label>
+    <input matInput type="text" #txtName>
+  </mat-form-field>
+  
+  <mat-form-field class="pharmacy-create-form">
+    <mat-label>Phone</mat-label>
+    <input matInput type="tel" #txtPhone>
+  </mat-form-field>
+  
+  <mat-form-field class="pharmacy-create-form">
+    <mat-label>Email</mat-label>
+    <input matInput placeholder="pat@example.com" type="email" required #txtEmail>
+  </mat-form-field>
+  <mat-form-field class="pharmacy-create-form">
+    <mat-label>Address</mat-label>
+    <textarea matInput #txtAddress></textarea>
+  </mat-form-field>
+  
+  <mat-form-field class="pharmacy-create-form">
+    <mat-label>Status</mat-label>
+    <mat-select  #txtStatus>
+      <mat-option value="0">Close</mat-option>
+      <mat-option value="1">Open</mat-option>
+      <mat-option value="2">Duty</mat-option>
+    </mat-select>
+  </mat-form-field>
+  
+  <mat-form-field class="pharmacy-create-form">
+    <mat-label>Language</mat-label>
+    <mat-select  #txtLanguage>
+      <mat-option value="0">Türkçe</mat-option>
+      <mat-option value="1">English</mat-option>
+    </mat-select>
+  </mat-form-field>
+  
+  <mat-form-field class="pharmacy-create-form">
+    <mat-label>Sort Order</mat-label>
+    <input matInput type="number" min="1" max="1234567" value="1" #txtSortOrder>
+  </mat-form-field>
+  
+  <section class="enable-section">
+    <mat-checkbox class="enable-margin" #txtEnable>Is Active!</mat-checkbox>
+  </section>
+  
+  <section>
+    <div class="create-label"></div>
+    <div class="create-button-row">
+      <button mat-raised-button color="primary" (click)="createPharmacy(txtName.value, txtPhone.value, txtEmail.value, txtAddress.value, txtStatus.value,txtLanguage.value, txtSortOrder.value, txtEnable.value)">Create New</button>
+    </div>
+  </section>

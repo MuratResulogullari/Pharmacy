@@ -1,1 +1,20 @@
-<p>pharmacies works!</p>
+<mat-drawer-container class="pharmacy-container">
+    <mat-drawer mode="side" opened>
+        <mat-accordion class="create-pharmacy-expansion">
+            <mat-expansion-panel hideToggle>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                Pharmacy
+                </mat-panel-title>
+                <mat-panel-description>
+                Create
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <app-create></app-create>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </mat-drawer>
+    <mat-drawer-content>
+        <app-list></app-list>
+    </mat-drawer-content>
+  </mat-drawer-container>
