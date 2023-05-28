@@ -10,5 +10,6 @@
         public string Message { get; set; }
         public TEntity Result { get; set; }
         public string RedirectUrl { get; set; }
+        public object Errors { get; set; }
     }
 }

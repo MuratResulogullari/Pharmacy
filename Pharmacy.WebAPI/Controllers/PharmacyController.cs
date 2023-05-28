@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Pharmacy.Business.Abstract;
-using Pharmacy.Business.Mvc.ModelHandler;
 using Pharmacy.Core.DataTransferObjects;
 using Pharmacy.Core.DataTransferObjects.Pharmacies;
 
@@ -21,8 +20,6 @@ namespace Pharmacy.WebAPI.Controllers
         public async Task<ActionResult<RequestResult>> CreatePharmacyAsync(PharmacyDTO dto)
         {
             RequestResult requestResult = new();
-            if (!ModelState.IsValid)
-                return InvalidModelHandler.GetErrorMessages(ModelState);
 
             var entity = new Pharmacy.Core.Entities.Pharmacies.Pharmacy
             {
@@ -41,8 +38,6 @@ namespace Pharmacy.WebAPI.Controllers
         [HttpPut("UpdatePharmacy")]
         public async Task<ActionResult<RequestResult>> UpdatePharmacyAsync(PharmacyDTO dto)
         {
-            if (!ModelState.IsValid)
-                return InvalidModelHandler.GetErrorMessages(ModelState);
             var entity = new Pharmacy.Core.Entities.Pharmacies.Pharmacy
             {
                 Id = dto.Id,
@@ -63,7 +58,7 @@ namespace Pharmacy.WebAPI.Controllers
         {
             var entity = new Core.Entities.Pharmacies.Pharmacy
             {
-                Id =id
+                Id = id
             };
             return await _pharmacyService.DeleteAsync(entity);
         }
@@ -71,8 +66,7 @@ namespace Pharmacy.WebAPI.Controllers
         [HttpGet("getPharmacyById/{id}")]
         public async Task<ActionResult<RequestResult>> GetPharmacyById(int id)
         {
-             return await _pharmacyService.GetByIdsAsync(new int[1] {id});
-           
+            return await _pharmacyService.GetByIdsAsync(new int[1] { id });
         }
     }
 }

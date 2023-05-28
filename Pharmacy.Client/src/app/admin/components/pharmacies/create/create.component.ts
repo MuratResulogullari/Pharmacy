@@ -22,12 +22,60 @@ export class CreateComponent implements OnInit {
     phoneNumber: phone,
     email: email,
     address: address,
-    status: parseInt(status),
-    languageId: parseInt(language),
+    status: typeof(parseInt(status))==typeof(Number)? parseInt(status):0,
+    languageId: typeof(parseInt(language))==typeof(Number)? parseInt(language):0,
     enable: Boolean(enable),
-    sortOrder: parseInt(sortOrder)
+    sortOrder: typeof(parseInt(sortOrder))==typeof(Number)? parseInt(sortOrder):1
   };
-  this.pharmacyService.createPharmcy(pharmacyDto);
+  if (validation(pharmacyDto)) {
+    this.pharmacyService.createPharmacy(pharmacyDto,()=>{
+    
+    },errorMessage=>{
+      alert(errorMessage);
+    });
+  }
+  
 }
 
+}
+function validation(dto:PharmacyDTO) {
+  if(dto.name==null || dto.name =="" || dto.name=='undefined')
+  {
+    alert("Name should be not empty.");
+    return false;
+  } else if(dto.phoneNumber==null || dto.phoneNumber =="" || dto.phoneNumber=='undefined')
+  {
+    alert("Phone should be not empty.");
+    return false;
+  } else if(dto.email==null || dto.email =="" || dto.email=='undefined')
+  {
+    alert("Email should be not empty.");
+    return false;
+  }
+  else if(dto.address==null || dto.address =="" || dto.address=='undefined')
+  {
+    alert("Address should be not empty.");
+    return false;
+  }
+  else if(dto.status==null || dto.status<0)
+  {
+    alert("Status should be not empty.");
+    return false;
+  }
+  else if(dto.languageId==null || dto.languageId<0)
+  {
+    alert("Language should be not empty.");
+    return false;
+  }
+  else if(dto.enable==null)
+  {
+    alert("Language should be not empty.");
+    return false;
+  }
+  else if(dto.sortOrder==null || dto.sortOrder<0)
+  {
+    alert("Sort order should be not empty.");
+    return false;
+  }
+  return true;
 }

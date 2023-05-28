@@ -11,10 +11,13 @@ import { HttpClientService } from 'src/app/services/common/http-client.service';
 export class PharmaciesComponent  implements OnInit{
   constructor(private httpClientServe:HttpClientService){}
   ngOnInit(): void {
-    this.httpClientServe.get<RequestResult<PharmacyDTO>>({
-      controller:"pharmacy",
-      action:"getPharmacyById",
-    },2).subscribe(response=> console.log(response.result?.name));
+
+
+
+    // this.httpClientServe.get<RequestResult<PharmacyDTO>>({
+    //   controller:"pharmacy",
+    //   action:"getPharmacyById",
+    // },2).subscribe(response=> console.log(response.result?.name));
       
      
       
