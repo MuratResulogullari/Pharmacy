@@ -4,6 +4,7 @@ using Pharmacy.Business.Abstract;
 using Pharmacy.Core.CriteriaObjects.Bases;
 using Pharmacy.Core.DataTransferObjects;
 using Pharmacy.Core.Entities.Logs;
+using Pharmacy.DataAccess.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,11 @@ namespace Pharmacy.Business.Concrete
 {
     public class LogManager : ILogService
     {
+        private readonly ILogRepository _logRepository;
+        public LogManager(ILogRepository logRepository)
+        {
+            _logRepository = logRepository;
+        }
         public RequestResult<bool> Any(Expression<Func<Log, bool>> predicate)
         {
             throw new NotImplementedException();
@@ -102,7 +108,7 @@ namespace Pharmacy.Business.Concrete
 
         public Task<RequestResult<PagedResult>> PagedListAsync(Expression<Func<Log, bool>> predicate, PagedCriteriaObject criteria)
         {
-            throw new NotImplementedException();
+            return _logRepository.PagedListAsync(predicate, criteria);
         }
 
         public RequestResult<PagedResult> Select(Expression<Func<Log, object>> selector, Expression<Func<Log, bool>> predicate, PagedCriteriaObject criteria)

@@ -7,7 +7,8 @@ import { PharmaciesModule } from './pharmacies/pharmacies.module';
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+  ],
   imports: [
     CommonModule,
     HomeModule,
