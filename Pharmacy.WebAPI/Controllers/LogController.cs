@@ -20,7 +20,7 @@ namespace Pharmacy.WebAPI.Controllers
         [HttpPost("getLogPagedList")]
         public async Task<ActionResult<RequestResult<PagedResult>>> GetLogPagedList(PagedCriteriaObject pagedCriteria)
         {
-            return await _logService.PagedListAsync(x => x.Id>0, pagedCriteria);
+            return await _logService.PagedListAsync(x => x.Id> 0, pagedCriteria);
         }
     }
 }
