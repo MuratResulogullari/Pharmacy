@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { AlertOptions } from 'src/app/contracts/alerts/alert';
 import { PharmacyDTO } from 'src/app/contracts/pharmacy/pharmacy-dto';
-import { PharmacyService } from 'src/app/services/common/pharmcies/pharmacy.service';
+import { AlertService } from 'src/app/services/common/alertservices/alertservice.service';
+import { PharmacyService } from 'src/app/services/common/pharmacyservices/pharmacy.service';
 
 @Component({
   selector: 'app-create',
@@ -9,14 +11,15 @@ import { PharmacyService } from 'src/app/services/common/pharmcies/pharmacy.serv
   styleUrls: ['./create.component.css']
 })
 export class CreateComponent implements OnInit {
- constructor(private pharmacyService : PharmacyService){
+ constructor(private pharmacyService : PharmacyService
+             ,private alertService:AlertService ){
 
  }
  ngOnInit(): void {
    
  }
  
- createPharmacy(name: string, phone: string, email: string, address: string,status:string,language:string,sortOrder: string, enable: string) {
+ createPharmacy(name: string, phone: string, email: string, address: string,status:string,language:string,sortOrder: string, enable:boolean) {
   const pharmacyDto: PharmacyDTO = {
     name: name,
     phoneNumber: phone,
@@ -24,7 +27,7 @@ export class CreateComponent implements OnInit {
     address: address,
     status: typeof(parseInt(status))==typeof(Number)? parseInt(status):0,
     languageId: typeof(parseInt(language))==typeof(Number)? parseInt(language):0,
-    enable: Boolean(enable),
+    enable: enable,
     sortOrder: typeof(parseInt(sortOrder))==typeof(Number)? parseInt(sortOrder):1
   };
   if (validation(pharmacyDto)) {
@@ -40,7 +43,7 @@ export class CreateComponent implements OnInit {
 }
 function validation(dto:PharmacyDTO) {
   if(dto.name==null || dto.name =="" || dto.name=='undefined')
-  {
+  { 
     alert("Name should be not empty.");
     return false;
   } else if(dto.phoneNumber==null || dto.phoneNumber =="" || dto.phoneNumber=='undefined')

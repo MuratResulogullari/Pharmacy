@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UsersComponent } from './users.component';
 import { RouterModule } from '@angular/router';
-import { RolesComponent } from '../roles/roles.component';
 
 
 
@@ -13,8 +12,7 @@ import { RolesComponent } from '../roles/roles.component';
   imports: [
     CommonModule,
     RouterModule.forChild([
-      {path:"users",component:UsersComponent},
-      {path:"roles",component:RolesComponent}
+      {path:"users",component:UsersComponent}
     ])
   ]
 })
