@@ -9,6 +9,8 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatButtonModule} from '@angular/material/button';
 import {MatExpansionModule} from '@angular/material/expansion';
+import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator';
 import { CreateComponent } from './create/create.component';
 import { ListComponent } from './list/list.component';
 
@@ -30,7 +32,9 @@ import { ListComponent } from './list/list.component';
     MatSelectModule,
     MatCheckboxModule,
     MatButtonModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatTableModule,
+    MatPaginatorModule
   ]
 })
 export class PharmaciesModule {

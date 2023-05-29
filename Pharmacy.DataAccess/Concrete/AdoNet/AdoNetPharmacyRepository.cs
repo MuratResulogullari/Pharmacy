@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Npgsql;
+﻿using Npgsql;
+using Pharmacy.Core.CriteriaObjects.Bases;
 using Pharmacy.Core.DataTransferObjects;
 using Pharmacy.Core.DataTransferObjects.Pharmacies;
 using Pharmacy.Core.Enums;
@@ -7,6 +7,7 @@ using Pharmacy.DataAccess.Abstract;
 using Pharmacy.DataAccess.Concrete.Utilities;
 using Pharmacy.DataAccess.Configuration;
 using Pharmacy.DataAccess.Loggers;
+using System.Linq.Expressions;
 
 namespace Pharmacy.DataAccess.Concrete.AdoNet
 {
@@ -149,6 +150,7 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
                         var savedPharmacy = list.FirstOrDefault();
                         savedPharmacy.DeletedBy = entity.DeletedBy ?? 1;
                         savedPharmacy.DeletedOn = DateTime.UtcNow.ToString("G");
+                        savedPharmacy.Enable = false;
                         var resultUpdated = await UpdateAsync(savedPharmacy);
                     }
                     else
@@ -212,6 +214,61 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
                 {
                     _con.Close();
                     _con.Open();
+                }
+            }
+
+            return result;
+        }
+
+        public override async Task<RequestResult<PagedResult>> PagedListAsync(Expression<Func<Core.Entities.Pharmacies.Pharmacy, bool>> predicate, PagedCriteriaObject criteria)
+        {
+            RequestResult <PagedResult > result = new RequestResult<PagedResult>();
+            result.Result = new PagedResult();
+            using (NpgsqlConnection _con = new NpgsqlConnection(PostgreSQLString))
+            {
+               
+                NpgsqlCommand _cmd = new NpgsqlCommand();
+                _cmd.Connection = _con;
+                _cmd.CommandText = $"SELECT * FROM pharmacies p WHERE (p.Enable AND p.Deleted_By = {default(int)}) AND p.deleted_on='' ";
+                if (criteria.SearchKey!=null && criteria.SearchKey.Trim() !="")
+                {
+                    _cmd.CommandText += $" AND p.Name LIKE '%{criteria.SearchKey}%' ";
+                }
+                _con.Open();
+                try
+                {
+                    NpgsqlDataReader reader = await _cmd.ExecuteReaderAsync();
+                    List<PharmacyDTO> list = new List<PharmacyDTO>();
+                    if (reader.HasRows)
+                    {
+                        list.AddRange(MapToEntity.DataReaderMapToListWithCaseMap<PharmacyDTO>(reader));
+                        result.Success = true;
+                        result.Message = "Kayıt var";
+                        result.Result.Success = true;
+                        result.Result.RecordsCountOfPerPage = criteria.RecordsCountOfPerPage;
+                        result.Result.CurrentPage=criteria.CurrentPage;
+                        result.Result.TotalCountOfRecords = list.ToList().Count();
+                        result.Result.Items = list.ToList()
+                            .Skip((criteria.CurrentPage - 1) * criteria.RecordsCountOfPerPage)
+                            .Take(criteria.RecordsCountOfPerPage).OrderBy(x=>x.SortOrder);
+                            
+                    }
+                    else
+                    {
+                        result.Message = $"Kayıt mevcut değil. Code = {Code} - GBIA2";
+                    }
+                    Logger.LogToDatabase(result.Message, result.Success ? (int)ELogType.Info : (int)ELogType.Warn, "", Code, 0);
+                }
+                catch (Exception ex)
+                {
+                    result.Message = $"Kayıt mevcut değil. Code = {Code} - D2345";
+                    Console.WriteLine($"Code= {Code} - StackTrace = {ex.StackTrace} - Message = {ex.Message}");
+                    Logger.LogExceptionToDatabase(ex, Code, 1);
+                }
+                finally
+                {
+                    _con.Close();
+                    _cmd.Dispose();
                 }
             }
 

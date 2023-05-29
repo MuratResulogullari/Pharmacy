@@ -73,7 +73,7 @@ namespace Pharmacy.Business.Concrete
 
         public Task<RequestResult<PagedResult>> PagedListAsync(Expression<Func<Core.Entities.Pharmacies.Pharmacy, bool>> predicate, PagedCriteriaObject criteria)
         {
-            throw new NotImplementedException();
+            return _pharmacyRepository.PagedListAsync(predicate, criteria); 
         }
 
         public RequestResult<List<Core.Entities.Pharmacies.Pharmacy>> ToList(Expression<Func<Core.Entities.Pharmacies.Pharmacy, bool>> predicate, ToListCriteriaObject criteria)

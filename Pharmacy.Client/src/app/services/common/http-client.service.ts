@@ -38,7 +38,12 @@ export class HttpClientService {
     url = requestPrameterCO.endPoint? requestPrameterCO.endPoint : `${this.url(requestPrameterCO)}`;
     return this.httpClient.put<T>(url,body,{headers:requestPrameterCO.headers})
   }
-  delete<T>(requestPrameterCO:Partial<RequestPrameterCO>, body: Partial<T>,id?:number) :Observable<T> {
+  delete(requestPrameterCO:Partial<RequestPrameterCO>,id?:number){
+    let url :string="";
+    url = requestPrameterCO.endPoint? requestPrameterCO.endPoint : `${this.url(requestPrameterCO)}${id?`/${id}`:""}`;
+    return this.httpClient.delete(url)
+  }
+  deleteGeneric<T>(requestPrameterCO:Partial<RequestPrameterCO>, body: Partial<T>,id?:number) :Observable<T> {
     let url :string="";
     url = requestPrameterCO.endPoint? requestPrameterCO.endPoint : `${this.url(requestPrameterCO)}${id?`/${id}`:""}`;
     return this.httpClient.delete<T>(url,body)

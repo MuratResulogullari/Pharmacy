@@ -16,6 +16,7 @@ namespace Pharmacy.Business
             services.AddScoped<IUserRoleRepository, AdoNetUserRoleRepository>();
             services.AddScoped<IRoleRepository, AdoNetRoleRepository>();
             services.AddScoped<IPharmacyRepository, AdoNetPharmacyRepository>();
+            services.AddScoped<ILogRepository, AdoNetLogRepository>();
 
             #endregion Repositories
 
@@ -25,7 +26,7 @@ namespace Pharmacy.Business
             services.AddScoped<IUserRoleService, UserRoleManager>();
             services.AddScoped<IRoleService, RoleManager>();
             services.AddScoped<IPharmacyService, PharmacyManager>();
-
+            services.AddScoped<ILogService,LogManager>();
             #endregion Services
         }
     }
