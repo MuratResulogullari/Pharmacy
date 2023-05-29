@@ -8,10 +8,14 @@ import { UiModule } from './ui/ui.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentsModule } from "./admin/layout/components/components.module";
 import { HttpClientModule } from '@angular/common/http';
+import { AlertComponent } from './helpers/alert/alert.component';
+
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
+        AlertComponent
     ],
     providers: [
       {provide:"baseUrl",useValue:"https://localhost:7060/api",multi:true}
@@ -24,7 +28,8 @@ import { HttpClientModule } from '@angular/common/http';
         UiModule,
         BrowserAnimationsModule,
         ComponentsModule,
-        HttpClientModule
+        HttpClientModule,
+        ReactiveFormsModule
     ]
 })
 export class AppModule { }

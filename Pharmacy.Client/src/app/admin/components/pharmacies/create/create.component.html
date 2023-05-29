@@ -40,12 +40,12 @@
   </mat-form-field>
   
   <section class="enable-section">
-    <mat-checkbox class="enable-margin" #txtEnable>Is Active!</mat-checkbox>
+    <mat-checkbox class="enable-margin"  #txtEnable >Is Active!</mat-checkbox>
   </section>
   
   <section>
     <div class="create-label"></div>
     <div class="create-button-row">
-      <button mat-raised-button color="primary" (click)="createPharmacy(txtName.value, txtPhone.value, txtEmail.value, txtAddress.value, txtStatus.value,txtLanguage.value, txtSortOrder.value, txtEnable.value)">Create New</button>
+      <button mat-raised-button color="primary" (click)="createPharmacy(txtName.value, txtPhone.value, txtEmail.value, txtAddress.value, txtStatus.value,txtLanguage.value, txtSortOrder.value, txtEnable.checked)">Create New</button>
     </div>
   </section>

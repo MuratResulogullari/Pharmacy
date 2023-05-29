@@ -3,6 +3,8 @@ import { HttpClientService } from '../http-client.service';
 import { PharmacyDTO } from 'src/app/contracts/pharmacy/pharmacy-dto';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { RequestResult } from 'src/app/contracts/base/request-result';
+import { PagedResult } from 'src/app/contracts/base/paged-result';
+import { PagedCriteriaObject } from 'src/app/contracts/criteria/base/paged-criteria-object';
 
 
 @Injectable({
@@ -58,11 +60,22 @@ createPharmacy(pharmacyDto: PharmacyDTO, successCallBack?: (response:object) => 
   );
 }
 
-  updatePharmcy(pharmacy:PharmacyDTO){
+  updatePharmacy(pharmacy:PharmacyDTO){
     
   }
-  deletePharmcy(id:number){
-    
+  deletePharmacy(id:number ,successCallBack?: (response:RequestResult<object>) => void,errorCallBack?: (errorMessage: string) => void){
+    return  this.httpClientService.delete({
+          controller:"pharmacy",
+          action:"deletePharmacy"
+        }, id).subscribe(
+          (response) => {
+            if (successCallBack) {
+              successCallBack(response);
+            }
+          },(err)=>{
+            if(errorCallBack)
+              errorCallBack(err)
+          });
   }
   getPharmcyById(id:number){
     this.httpClientService.get<RequestResult<PharmacyDTO>>({
@@ -70,6 +83,19 @@ createPharmacy(pharmacyDto: PharmacyDTO, successCallBack?: (response:object) => 
       action:"getPharmacyById",
     },id).subscribe(response=> console.log(response.result?.name));
   }
- 
+  async getPharmacyPagedList(criteria: PagedCriteriaObject, successCallBack?: () => void,errorCallBack?: (errorMessage: string) => void): Promise<RequestResult<PagedResult<PharmacyDTO>>> {
+    try {
+      const result: any = await this.httpClientService.post({
+        controller: "pharmacy",
+        action: "getPharmacyPagedList",
+      },criteria).toPromise();
+      
+      return result;
+    } catch (error) {
+      // Handle error here
+      console.error('An error occurred while fetching pharmacy data:', error);
+      throw error;
+    }
+  }
 }
 

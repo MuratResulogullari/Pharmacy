@@ -23,6 +23,7 @@ namespace Pharmacy.Business.Abstract.Generics
         Task<RequestResult<List<TEntity>>> ToListAsync(Expression<Func<TEntity, bool>> predicate, ToListCriteriaObject criteria);
 
         Task<RequestResult<PagedResult>> WhereAsync(Expression<Func<TEntity, bool>> predicate);
+
         Task<RequestResult<PagedResult>> PagedListAsync(Expression<Func<TEntity, bool>> predicate, PagedCriteriaObject criteria);
 
     }
