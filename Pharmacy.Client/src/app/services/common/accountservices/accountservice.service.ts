@@ -2,18 +2,18 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { UserDTO } from 'src/app/contracts/users/user-dto';
 import { HttpClientService } from '../http-client.service';
 import { RequestResult } from 'src/app/contracts/base/request-result';
-
 
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
     private userSubject: BehaviorSubject<UserDTO | null>;
     public user: Observable<UserDTO | null>;
-
+    private _isLoggedIn$ = new BehaviorSubject<boolean>(false);
+    isLoggedIn$ = this._isLoggedIn$.asObservable();
     constructor(
         private router: Router,
         private http: HttpClient,
@@ -27,17 +27,17 @@ export class AccountService {
         return this.userSubject.value;
     }
 
-    login(username: string, password: string) {
-      
+    login(username: any, password?: any) {
+
      return this.httpClientService.post({
         controller:"user",
         action:"authenticate"
-      },{ username, password }).pipe(map(user => {
-        // store user details and jwt token in local storage to keep user logged in between page refreshes
-        localStorage.setItem('user', JSON.stringify(user));
-        this.userSubject.next(user);
-        return user;
-    }));      
+      },{ username, password }).pipe(
+        tap((response: any) => {
+          this._isLoggedIn$.next(true);
+          localStorage.setItem('profanis_auth', response.token);
+        })
+      );
     }
 
     logout() {
@@ -61,7 +61,7 @@ export class AccountService {
         }).subscribe(x=>{
           if(x.success && x.result !=null)
             return x.result;
-          else 
+          else
            return Array<UserDTO>
         });
     }
@@ -73,7 +73,7 @@ export class AccountService {
           },id).subscribe(x=>{
             if(x.success && x.result !=null)
               return x.result;
-            else 
+            else
              return Array<UserDTO>
           });
     }

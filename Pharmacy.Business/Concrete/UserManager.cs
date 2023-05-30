@@ -16,7 +16,10 @@ namespace Pharmacy.Business.Concrete
         {
             _userRepository = userRepository;
         }
-
+        public RequestResult<User> GetByTCKN(string tckn)
+        {
+            return _userRepository.GetByTCKN(tckn);
+        }
         RequestResult ISyncService<User>.Create(User entity)
         {
           return _userRepository.Create(entity);
@@ -141,5 +144,7 @@ namespace Pharmacy.Business.Concrete
         {
             throw new NotImplementedException();
         }
+
+       
     }
 }
