@@ -60,8 +60,19 @@ createPharmacy(pharmacyDto: PharmacyDTO, successCallBack?: (response:object) => 
   );
 }
 
-  updatePharmacy(pharmacy:PharmacyDTO){
-    
+  updatePharmacy(pharmacyDto:PharmacyDTO,successCallBack?: (response:RequestResult<object>) => void,errorCallBack?: (errorMessage: string) => void){
+    return  this.httpClientService.put({
+      controller:"pharmacy",
+      action:"updatePharmacy"
+    }, pharmacyDto).subscribe(
+      (response) => {
+        if (successCallBack) {
+          successCallBack(response);
+        }
+      },(err)=>{
+        if(errorCallBack)
+          errorCallBack(err)
+      });
   }
   deletePharmacy(id:number ,successCallBack?: (response:RequestResult<object>) => void,errorCallBack?: (errorMessage: string) => void){
     return  this.httpClientService.delete({

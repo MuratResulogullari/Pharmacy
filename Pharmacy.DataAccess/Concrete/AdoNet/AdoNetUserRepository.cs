@@ -4,8 +4,10 @@ using Pharmacy.Core.Entities.Users;
 using Pharmacy.Core.Enums;
 using Pharmacy.DataAccess.Abstract;
 using Pharmacy.DataAccess.Abstract.Generics;
+using Pharmacy.DataAccess.Concrete.Utilities;
 using Pharmacy.DataAccess.Configuration;
 using Pharmacy.DataAccess.Loggers;
+using System.Data;
 
 namespace Pharmacy.DataAccess.Concrete.AdoNet
 {
@@ -16,56 +18,105 @@ namespace Pharmacy.DataAccess.Concrete.AdoNet
         private readonly string PostgreSQLString = ConfigurationConnectionDatabase.GetConnecxtionString();
         private readonly string Code = DateTime.UtcNow.ToString("G").Replace(".", "").Replace(" ", "").Replace(":", "");
 
+        public RequestResult<User> GetByTCKN(string tckn)
+        {
+            using (NpgsqlConnection con = new NpgsqlConnection(PostgreSQLString))
+            {
+                RequestResult<User> result = new();
+                string commandText = $"SELECT  * FROM  Users u  WHERE  r.deleted_on='' AND r.TCKN='{tckn}'";
+                var command = new NpgsqlCommand(commandText, con);
+                NpgsqlDataAdapter dataAdapter = new NpgsqlDataAdapter();
+                DataTable dataTable = new DataTable();
+                try
+                {
+                    con.Open();
+                    NpgsqlDataReader reader = command.ExecuteReader();
+                    List<User> list = new List<User>();
+                    if (reader.HasRows)
+                    {
+                        list.AddRange(MapToEntity.DataReaderMapToList<User>(reader, new string[] { "UserRoles" }));
+                        result.Success = true;
+                        result.Message = "Kayıt var";
+                        result.Result = list.First();
+                        List<UserRole> userRoles = new List<UserRole>()
+                        {
+                            new UserRole() {Id=1,UserId=1,RoleId=1,Role=new Role {Id=1,Name="Admin"}},
+                            new UserRole() {Id=1,UserId=1,RoleId=2,Role=new Role {Id=1,Name="User"} }
+                        };
+                        result.Result.UserRoles = userRoles.ToList();
+                    }
+                    else
+                    {
+                        result.Message = "Kayıt bulunamadı.";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result.Message = $"Mevcut kayıt bulunamadı. Code = {Code} - A3456";
+                    Console.WriteLine($"Code= {Code} - StackTrace = {ex.StackTrace} - Message = {ex.Message}");
+                }
+                finally
+                {
+                    command.Dispose();
+                    con.Close();
+                }
+
+                return result;
+            }
+        }
+
         public override async Task<RequestResult> CreateAsync(User entity)
         {
-            Logger.LogToDatabase("oluşrma öncesi", (int)ELogType.Info, string.Empty, string.Empty, entity.CreatedBy);
-            var resultUser = await base.CreateAsync(entity);
-            if (!resultUser.Success)
-            {
-                return resultUser;
-            }
-            else
-            {
-                using (NpgsqlConnection _con = new NpgsqlConnection(PostgreSQLString))
-                {
-                    RequestResult result = new RequestResult();
-                    int rowsAffected = 0;
-                    try
-                    {
-                        result.Result = entity;
-                        string query = $"";
-                        _con.Open();
-                        foreach (var role in entity.UserRoles)
-                        {
-                            query = $"Insert INTO userroles (userid, roleid, languageid, ENABLE, sortorder, createdby, createdon) VALUES ({(int)resultUser.Result} ,{role.Id},{role.LanguageId},{role.Enable},{role.SortOrder},{role.CreatedBy},'{role.CreatedOn}');";
-                            var cmd = new NpgsqlCommand(query, _con);
+            RequestResult result = new();
 
-                            rowsAffected = await cmd.ExecuteNonQueryAsync();
-                            if (rowsAffected > 0)
-                            {
-                                result.Success = true;
-                            }
-                            else
-                            {
-                                result.Result = (string)result.Result + "," + role.RoleId;
-                                result.Message = "Kayıt yapılamayan roller var";
-                                Logger.LogToDatabase(result.Message, (int)ELogType.Error, result.Result.ToString(), Code, entity.CreatedBy);
-                            }
-                            cmd.Dispose();
-                            rowsAffected = 0;
-                        }
+            using (NpgsqlConnection _con = new NpgsqlConnection(PostgreSQLString))
+            {
+                NpgsqlCommand _cmd = new NpgsqlCommand();
+                _cmd.Connection = _con;
+                _cmd.CommandText = $"INSERT INTO users (name,tckn,concurrencyStamp, language_id, enable, sort_order, created_by, created_on, modified_by, modified_on, deleted_by, deleted_on) VALUES (@Name,@TCKN,@ConcurrencyStamp,@LanguageId,@Enable,@SortOrder,@CreatedBy,@CreatedOn,@ModifiedBy,@ModifiedOn,@DeletedBy,@DeletedOn);";
+
+                _cmd.Parameters.AddWithValue("@Name", entity.Name);
+                _cmd.Parameters.AddWithValue("@TCKN", entity.TCKN);
+                _cmd.Parameters.AddWithValue("@ConcurrencyStamp", entity.ConcurrencyStamp);
+                _cmd.Parameters.AddWithValue("@Enable", entity.Enable);
+                _cmd.Parameters.AddWithValue("@SortOrder", entity.SortOrder);
+                _cmd.Parameters.AddWithValue("@CreatedBy", entity.CreatedBy);
+                _cmd.Parameters.AddWithValue("@CreatedOn", entity.CreatedOn);
+                _cmd.Parameters.AddWithValue("@ModifiedBy", entity.ModifiedBy ?? default);
+                _cmd.Parameters.AddWithValue("@ModifiedOn", entity.ModifiedOn ?? string.Empty);
+                _cmd.Parameters.AddWithValue("@DeletedBy", entity.DeletedBy ?? default);
+                _cmd.Parameters.AddWithValue("@DeletedOn", entity.DeletedOn ?? string.Empty);
+
+                _con.Open();
+                try
+                {
+                    int rowsAffected = await _cmd.ExecuteNonQueryAsync();
+                    if (rowsAffected > 0)
+                    {
+                        result.Result = rowsAffected;
+                        result.Success = true;
+                        result.Message = "Kayıt işlemi yapıldı.";
                     }
-                    catch (Exception ex)
+                    else
                     {
                         result.Message = $"Kayıt işlemi yapılamadı. Code = {Code} - C1010";
-                        Console.WriteLine($"Code= {Code} - StackTrace = {ex.StackTrace} - Message = {ex.Message}");
-                        Logger.LogExceptionToDatabase(ex, result.Message, 0);
                     }
-                    finally { _con.Close(); }
-                    Logger.LogToDatabase("oluşrma sonrası", (int)ELogType.Info, string.Empty, string.Empty, entity.CreatedBy);
-                    return result;
+                    Logger.LogToDatabase(result.Message, result.Success ? (int)ELogType.Info : (int)ELogType.Error, "", Code, entity.CreatedBy);
+                }
+                catch (Exception ex)
+                {
+                    result.Message = $"Kayıt işlemi yapılamadı. Code = {Code} - C1010";
+                    Console.WriteLine($"Code= {Code} - StackTrace = {ex.StackTrace} - Message = {ex.Message}");
+                    Logger.LogExceptionToDatabase(ex, Code, 1);
+                }
+                finally
+                {
+                    _con.Close();
+                    _con.Open();
                 }
             }
+
+            return result;
         }
     }
 }

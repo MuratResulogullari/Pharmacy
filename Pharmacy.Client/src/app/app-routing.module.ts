@@ -12,7 +12,7 @@ const routes: Routes = [
     {path:"",loadChildren:()=>import("./admin/components/pharmacies/pharmacies.module").then(module=>module.PharmaciesModule)},
     {path:"",loadChildren:()=>import("./admin/components/users/users.module").then(module=>module.UsersModule)},
     {path:"",loadChildren:()=>import("./admin/components/logs/logs.module").then(module=>module.LogsModule)},
-   
+
   ]
   },
   {path:"",component:HomeComponent},

@@ -1,11 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Pharmacy.Business.Abstract;
+using Pharmacy.Business.Mvc.CurrentUser;
 using Pharmacy.Business.Mvc.ModelHandler;
 using Pharmacy.Business.Mvc.PasswordHash;
 using Pharmacy.Core.CriteriaObjects.Bases;
 using Pharmacy.Core.DataTransferObjects;
 using Pharmacy.Core.DataTransferObjects.Users;
 using Pharmacy.Core.Entities.Users;
+using System.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace Pharmacy.WebAPI.Controllers
 {
@@ -13,16 +20,135 @@ namespace Pharmacy.WebAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
         private readonly IUserSevice _userSevice;
         private readonly IRoleService _roleService;
-
-        public UserController(IUserSevice userSevice
-            , IRoleService roleService)
+        private readonly ICurrentUser _currentUser;
+        private readonly IUserTokenService _userTokenService;
+        public UserController(IConfiguration configuration
+            , IUserSevice userSevice
+            , IRoleService roleService
+            , ICurrentUser currentUser
+            , IUserTokenService userTokenService
+            )
         {
+            _configuration = configuration;
             _userSevice = userSevice;
             _roleService = roleService;
+            _currentUser = currentUser;
+            _userTokenService = userTokenService;
         }
+        /// <summary>
+        /// Get User infromation on claims When user was login
+        /// </summary>
+        /// <returns></returns>
+        //[Authorize]
+        [HttpGet("GetUser")]
+        public ActionResult<string> GetUser()
+        {
+            var userName = _currentUser.GetUserName();
+            return Ok(userName);
+        }
+        [HttpPost("Login")]
+        public async Task<ActionResult<string>> Login(string tCKN, string password)
+        {
+            var requestResult = new RequestResult();
+            var result =  _userSevice.GetByTCKN(tCKN);
+            if (!result.Success)
+            {
+                requestResult.Success = false;
+                requestResult.Result = result.Result;
+                requestResult.Message = "User not found !";
+            }
+            else
+            {
+                User user = result.Result;
+                if (!PasswordUtility.Verify(password, user.PasswordHash))
+                {
+                    requestResult.Success = false;
+                    requestResult.Result = result.Result;
+                    requestResult.Message = "Wrong password !";
+                }
+                else
+                {
+                    var newRefreshToken = GenerateRefreshToken();
+                    newRefreshToken.Token = CreateToken(user);
+                    SetRefreshToken(newRefreshToken, user);
 
+                    requestResult.Success = true;
+                    requestResult.Result = newRefreshToken.Token;
+                    requestResult.Message = "Login Successfull.";
+                }
+            }
+            return Ok(requestResult);
+
+
+        }
+        /// <summary>
+        /// token add database and cookies
+        /// </summary>
+        /// <param name="refreshToken"></param>
+        /// <param name="user"></param>
+        private async void SetRefreshToken(UserToken userToken, User user)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = userToken.ExpiryDate
+            };
+            // key = token,value = token add cookies
+            Response.Cookies.Append("token", userToken.Token, cookieOptions);
+            var result = _userTokenService.GetByUserId(user.Id);
+            if (result.Success)
+            {
+                UserToken newToken = result.Result;
+                newToken.Token = userToken.Token;
+                newToken.ExpiryDate = userToken.ExpiryDate;
+                var resultUpd = await _userTokenService.UpdateAsync(newToken);
+            }
+        }
+        /// <summary>
+        ///  create json web token and return jwt token
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        private string CreateToken(User user)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Role, string.Join(',',user.UserRoles.Select(x=>x.Role.Name).ToArray()))
+            };
+
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
+                _configuration.GetSection("AppSettings:Token").Value));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(2),
+                signingCredentials: creds);
+
+            var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwtToken;
+        }
+        /// <summary>
+        /// create new token with  random token for dont not result  null
+        /// </summary>
+        /// <returns></returns>
+        private UserToken GenerateRefreshToken()
+        {
+            var userToken = new UserToken
+            {
+                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                ExpiryDate = DateTime.Now.AddDays(7)
+               
+            };
+
+            return userToken;
+        }
         [HttpPost("Register")]
         public async Task<ActionResult<RequestResult>> Register(UserDTO dto)
         {
@@ -156,10 +282,5 @@ namespace Pharmacy.WebAPI.Controllers
             return await _roleService.GetByIdsAsync(new int[] { id });
         }
 
-        [HttpGet("getRoles")]
-        public async Task<ActionResult<RequestResult<List<Role>>>> GetRoles()
-        {
-            return await _roleService.ToListAsync(x => x.Enable, new ToListCriteriaObject { });
-        }
     }
 }

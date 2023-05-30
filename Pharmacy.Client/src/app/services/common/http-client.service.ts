@@ -33,7 +33,12 @@ export class HttpClientService {
     return this.httpClient.post(url,body,{headers:requestPrameterCO.headers})
   }
  
-  put<T>(requestPrameterCO:Partial<RequestPrameterCO>,body: Partial<T>):Observable<T> {
+  put(requestPrameterCO:Partial<RequestPrameterCO>,body:any) {
+    let url :string="";
+    url = requestPrameterCO.endPoint? requestPrameterCO.endPoint : `${this.url(requestPrameterCO)}`;
+    return this.httpClient.put(url,body,{headers:requestPrameterCO.headers})
+  }
+  putGeneric<T>(requestPrameterCO:Partial<RequestPrameterCO>,body: Partial<T>):Observable<T> {
     let url :string="";
     url = requestPrameterCO.endPoint? requestPrameterCO.endPoint : `${this.url(requestPrameterCO)}`;
     return this.httpClient.put<T>(url,body,{headers:requestPrameterCO.headers})
