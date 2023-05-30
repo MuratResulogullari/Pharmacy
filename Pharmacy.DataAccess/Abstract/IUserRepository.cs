@@ -1,4 +1,5 @@
-﻿using Pharmacy.Core.Entities.Users;
+﻿using Pharmacy.Core.DataTransferObjects;
+using Pharmacy.Core.Entities.Users;
 using Pharmacy.DataAccess.Abstract.Generics;
 
 namespace Pharmacy.DataAccess.Abstract
@@ -7,5 +8,6 @@ namespace Pharmacy.DataAccess.Abstract
         , ISyncReadRepository<User>
         , IAsyncReadRepository<User>
     {
+        RequestResult<User> GetByTCKN(string tckn);
     }
 }

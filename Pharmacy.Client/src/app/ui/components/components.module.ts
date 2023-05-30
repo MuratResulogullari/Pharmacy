@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeModule } from './home/home.module';
 import { PharmaciesModule } from './pharmacies/pharmacies.module';
+import { AccountModule } from './account/account.module';
 
 
 
@@ -12,7 +13,8 @@ import { PharmaciesModule } from './pharmacies/pharmacies.module';
   imports: [
     CommonModule,
     HomeModule,
-    PharmaciesModule
+    PharmaciesModule,
+    AccountModule
   ]
 })
 export class ComponentsModule { }

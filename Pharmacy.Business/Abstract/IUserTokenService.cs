@@ -9,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace Pharmacy.Business.Abstract
 {
-    public interface IUserSevice: ISyncService<User>, IAsyncService<User>, ISyncReadService<User>, IAsyncReadService<User>
+    public interface IUserTokenService: ISyncService<UserToken>, IAsyncService<UserToken>, ISyncReadService<UserToken>, IAsyncReadService<UserToken>
     {
-        RequestResult<User>  GetByTCKN(string tckn);
+        RequestResult<UserToken> GetByUserId(int userId);
+
     }
 }

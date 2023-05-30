@@ -6,7 +6,9 @@ import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import {MatFormFieldModule} from '@angular/material/form-field';
-
+import {MatCardModule} from '@angular/material/card';
+import {MatInputModule} from '@angular/material/input';
+import {FormsModule} from '@angular/forms';
 @NgModule({
   declarations: [
     RegisterComponent,
@@ -17,9 +19,12 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     ReactiveFormsModule,
     BrowserModule,
     MatFormFieldModule,
+    MatCardModule,
+    MatInputModule,
+    FormsModule,
     RouterModule.forChild([
-      {path:"login",component:LoginComponent},
       {path:"register",component:LoginComponent},
+      {path:"login",component:LoginComponent},
     ]),
   ]
 })

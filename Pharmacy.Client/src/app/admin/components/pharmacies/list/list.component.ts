@@ -13,6 +13,7 @@ import { PharmacyService } from 'src/app/services/common/pharmacyservices/pharma
 export class ListComponent implements OnInit {
   displayedColumns: string[] = ['name', 'phoneNumber', 'email','status','languageId','enable','sortOrder','actions'];
   dataSource = new MatTableDataSource<PharmacyDTO>();
+  items=new Array<PharmacyDTO>();
  constructor(private pharmacyService : PharmacyService ){}
  ngOnInit(): void {
   this.getPagedList();
@@ -27,8 +28,10 @@ export class ListComponent implements OnInit {
     .then((d) => {
       if (d.success && d.result?.success && d.result.items != null) {
         this.dataSource = new MatTableDataSource<PharmacyDTO>(d.result.items);
+        this.items=d.result.items? d.result.items: new Array<PharmacyDTO>();
       } else {
         this.dataSource = new MatTableDataSource<PharmacyDTO>([]);
+        this.items=new Array<PharmacyDTO>();
       }
     })
     .catch((error) => {
@@ -36,10 +39,31 @@ export class ListComponent implements OnInit {
     });
 }
 onEdit(dto?:PharmacyDTO){
-  console.log(dto?.name);
+  if (dto !=null) {
+    const pharmacyDto= this.items.filter(x=>x.id==dto?.id);
+    this.openUpdateModal(dto);
+  }
+  
+}
+openUpdateModal(dto?:PharmacyDTO): void {
   
 }
 
+updatePharmacy(dto?:PharmacyDTO): void {
+  if (dto !=null) {
+   this.pharmacyService.updatePharmacy(dto,(response)=>{
+     if (response.success) {
+       alert(response.message);
+       this.ngOnInit();
+     }
+   },(error)=>{
+     console.error(error);
+   }); 
+  }
+  else{
+    alert("Selected should be not empty!");
+  }
+}
 onDelete(dto?:PharmacyDTO){
   if (dto !=null) {
     this.deletePharmacy(dto.id);
